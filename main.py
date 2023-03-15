@@ -1,13 +1,18 @@
 from Actors.student_class import StudentBlock
 from Actors.professor_class import Professor
 from Actors.education_entity_class import EducationEntity
+import json
+from datetime import datetime
 
 
-student1 = StudentBlock("Stefan Anghel")
-entity1 = EducationEntity("University", "Poli")
-professor1 = Professor("Caramihai", "OOP", entity1)
+print(datetime.now())
 
-professor1.add_milestone_to_student("grade", "10", student1)
+#
+# student1 = StudentBlock("Stefan Anghel")
+# entity1 = EducationEntity("University", "Poli")
+# professor1 = Professor("Caramihai", "OOP", entity1)
+#
+# professor1.add_milestone_to_student("grade", "10", student1)
 
 # student1.add_milestone("grade", "10", entity1)
 #
