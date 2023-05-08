@@ -1,5 +1,5 @@
 import pyodbc
-from Utils.singleton import Singleton
+from .Utils.singleton import Singleton
 
 
 @Singleton
@@ -36,7 +36,3 @@ class DbEngine:
                 self._disconnect()
                 return new_output
         self._disconnect()
-
-
-data_base = DbEngine.instance()
-print(data_base.run_query("select Name from Education_entities where ID_education_entity=1"))

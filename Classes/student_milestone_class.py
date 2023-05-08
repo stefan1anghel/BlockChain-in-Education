@@ -1,5 +1,5 @@
-from database_engine import DbEngine
-from Utils.common_methods import id_generator
+from mywebapp.webapp.database_engine import DbEngine
+from mywebapp.webapp.Utils import id_generator
 
 
 class Grade:

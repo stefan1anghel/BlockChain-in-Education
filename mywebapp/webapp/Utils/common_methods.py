@@ -5,7 +5,7 @@ import random
 def id_generator(class_name):
     is_unique = False
 
-    with open('C:\\Users\\Stefan\\Desktop\\Licenta\\BlockChain-in-Education\\Utils\\ids.json', "r") as file:
+    with open('/mywebapp/webapp/Utils/ids.json', "r") as file:
         data = file.read()
         parsed_data = json.loads(data)
 
@@ -14,7 +14,7 @@ def id_generator(class_name):
         if id not in eval(f"parsed_data['{class_name}_ids']"):
             eval(f"parsed_data['{class_name}_ids'].append(id)")
             data_to_dump = json.dumps(parsed_data)
-            with open("C:\\Users\\Stefan\\Desktop\\Licenta\\BlockChain-in-Education\\Utils\\ids.json", "w") as file:
+            with open("/mywebapp/webapp/Utils/ids.json", "w") as file:
                 file.write(data_to_dump)
             is_unique = True
             return id

@@ -1,7 +1,7 @@
 import hashlib
-from database_engine import DbEngine
+from mywebapp.webapp.database_engine import DbEngine
 from datetime import datetime
-from Utils.common_methods import id_generator
+from mywebapp.webapp.Utils import id_generator
 
 
 class StudentBlock:

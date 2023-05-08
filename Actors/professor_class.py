@@ -1,7 +1,5 @@
-from Actors.education_entity_class import EducationEntity
-from Actors.student_class import StudentBlock
-from Utils.common_methods import id_generator
-from database_engine import DbEngine
+from mywebapp.webapp.Utils import id_generator
+from mywebapp.webapp.database_engine import DbEngine
 
 
 class Professor:
