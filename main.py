@@ -1,7 +1,3 @@
-from Actors.student_class import StudentBlock
-from Actors.professor_class import Professor
-from Actors.education_entity_class import EducationEntity
-import json
 from datetime import datetime
 
 
