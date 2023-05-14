@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Signup</title>
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
@@ -9,31 +9,39 @@
   <div class="container h-100">
     <div class="row align-items-center h-100">
       <div class="col-md-6 offset-md-3">
-        <form method="post" action="{% url 'login' %}">
+        <form method="post" action="{% url 'create_student_account' %}">
           {% csrf_token %}
-          <!-- Email input -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" class="form-control" />
+          </div>
+
           <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" class="form-control" />
           </div>
 
-          <!-- Password input -->
           <div class="form-group">
             <label for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" />
           </div>
 
-          <select name="dropdown">
-            <option value="Students">Student</option>
-            <option value="Professors">Professor</option>
-            <option value="Education_entities">University</option>
-          </select>
-
-
-          <button type="submit" class="btn btn-primary btn-block mt-4">Sign in</button>
+          <button type="submit" class="btn btn-primary btn-block mt-4">Sign up</button>
         </form>
 
-        <a href="{% url 'create_student_account' %}">Create student account</a>
+        {% if success_message %}
+         <p>{{ success_message }}</p>
+        {% endif %}
 
       </div>
     </div>

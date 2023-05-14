@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .database_engine import DbEngine
 from django.http import HttpResponse
+from .student_class import StudentBlock
 
 
 def login(request):
@@ -49,7 +50,7 @@ def grades_view(request):
 @custom_login_required
 def blockchain_view(request):
     db = DbEngine.instance()
-    data = db.run_query(f"select TransactionsMessages from Students where ID={request.session.get('user_id')}")[0][0]
+    data = db.run_query(f"select TransactionMessages from Students where ID={request.session.get('user_id')}")[0][0]
     breakpoint()
     return render(request, 'blockchain_history.html', {'data': data})
 
@@ -57,3 +58,20 @@ def blockchain_view(request):
 @custom_login_required
 def welcome_professors(request):
     return render(request, 'welcome_professors.html')
+
+
+def create_student_account(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        username = request.POST['username']
+        password = request.POST['password']
+
+        new_student = StudentBlock(email=email, first_name=first_name, last_name=last_name, username=username, password=password)
+
+        if new_student:
+            success_message = "Sign up successful! You can now log in."
+            return render(request, 'create_student_account.html', {'success_message': success_message})
+
+    return render(request, 'create_student_account.html')
