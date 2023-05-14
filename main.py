@@ -1,4 +1,5 @@
 from datetime import datetime
+from mywebapp.webapp.student_class import StudentBlock
 
 
 print(datetime.now())
@@ -21,3 +22,5 @@ print(datetime.now())
 # entity1.approve_transaction(0)
 # student1.approve_transaction(0)
 # print(student1.block_data)
+
+StudentBlock('email', 'asd', 'asdjf', 'afjksdf', 'aksjdhfh')
