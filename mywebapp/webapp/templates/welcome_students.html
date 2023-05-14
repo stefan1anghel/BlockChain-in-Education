@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome!</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container h-100">
+    <div class="row align-items-center h-100">
+      <div class="col-md-6 offset-md-3">
+        <form method="post" action="{% url 'grades_view' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary btn-block mt-4">View grades</button>
+        </form>
+
+        <button type="submit" class="btn btn-primary btn-block mt-4">View transaction list</button>
+
+        <form method="post" action="{% url 'blockchain_view' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary btn-block mt-4">View blockchain history</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Bootstrap JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

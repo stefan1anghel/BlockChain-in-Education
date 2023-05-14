@@ -23,43 +23,21 @@
             <input type="password" id="password" name="password" class="form-control" />
           </div>
 
-          <!-- Checkbox and forgot password link -->
-          <div class="row">
-            <div class="col">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-                <label class="form-check-label" for="form2Example31"> Remember me </label>
-              </div>
-            </div>
-            <div class="col text-right">
-              <a href="#!">Forgot password?</a>
-            </div>
-          </div>
+          <select name="dropdown">
+            <option value="Students">Student</option>
+            <option value="Professors">Professor</option>
+            <option value="Education_entities">University</option>
+          </select>
 
-          <!-- Submit button -->
+
           <button type="submit" class="btn btn-primary btn-block mt-4">Sign in</button>
-
-          <!-- Register buttons -->
-          <div class="text-center mt-4">
-            <p>Not a member? <a href="#!">Register</a></p>
-            <p>or sign up with:</p>
-            <button type="button" class="btn btn-link btn-floating mx-1">
-              <i class="fab fa-facebook-f"></i>
-            </button>
-
-            <button type="button" class="btn btn-link btn-floating mx-1">
-              <i class="fab fa-google"></i>
-            </button>
-
-            <button type="button" class="btn btn-link btn-floating mx-1">
-              <i class="fab fa-twitter"></i>
-            </button>
-
-            <button type="button" class="btn btn-link btn-floating mx-1">
-              <i class="fab fa-github"></i>
-            </button>
-          </div>
         </form>
+
+        <form method="post" action="{% url 'create_student_account' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary btn-block mt-4">Create student account</button>
+        </form>
+
       </div>
     </div>
   </div>
