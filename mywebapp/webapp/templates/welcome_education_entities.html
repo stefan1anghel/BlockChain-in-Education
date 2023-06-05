@@ -9,21 +9,9 @@
   <div class="container h-100">
     <div class="row align-items-center h-100">
       <div class="col-md-6 offset-md-3">
-        <form method="post" action="{% url 'grades_view' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View grades</button>
-        </form>
-
-        <form method="post" action="{% url 'transactions_view' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View transaction list</button>
-        </form>
-
-        <form method="post" action="{% url 'blockchain_view' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View blockchain history</button>
-        </form>
-
+        <a href="{% url 'enroll' %}">
+          <button class="btn btn-primary">Enroll student</button>
+        </a>
       </div>
     </div>
   </div>
