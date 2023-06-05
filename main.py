@@ -1,9 +1,11 @@
-from datetime import datetime
-from mywebapp.webapp.student_class import StudentBlock
+from mywebapp.webapp.student_milestone_class import Transaction
+from mywebapp.webapp.database_engine import DbEngine
 
 
-print(datetime.now())
+db = DbEngine.instance()
 
+prof_list = db.run_query(f"select ID from Professors where ID_education_entity=1")
+print(prof_list)
 #
 # student1 = StudentBlock("Stefan Anghel")
 # entity1 = EducationEntity("University", "Poli")
@@ -23,4 +25,4 @@ print(datetime.now())
 # student1.approve_transaction(0)
 # print(student1.block_data)
 
-StudentBlock('email', 'asd', 'asdjf', 'afjksdf', 'aksjdhfh')
+
