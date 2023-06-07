@@ -260,6 +260,123 @@ def enroll(request):
 
 
 @custom_login_required
+def transactions_view_education(request):
+    db = DbEngine.instance()
+    data = db.run_query(f"select Type, Subject, Grade, Info, Student_approval, Education_entity_approval, ID from Transactions where ID_education_entity={request.session.get('user_id')}")
+    student_ids = db.run_query(f"select ID_student from Transactions")
+    name_list = []
+    for id in student_ids:
+        name = db.run_query(f"select FirstName, LastName from Students where ID={id[0]}")[0]
+        concat_name = name[0] + " " + name[1]
+        name_list.append(concat_name)
+
+    parsed_data_list = []
+    for index in range(len(data)):
+        new_data_list = list(data[index])
+        new_data_list.insert(0, name_list[index])
+        parsed_data_list.append(new_data_list)
+
+    return render(request, 'transactions_education.html', {'data': parsed_data_list})
+
+
+def accept_transaction_education(request, transaction_id):   # asta e o functie, nu view, vezi daca le poti face frumos pe foldere
+    # remember when the transaction was approved
+    date = datetime.now()
+
+    db = DbEngine.instance()
+
+    # set Education_entity_approval to True
+    db.run_query(f"update Transactions set Education_entity_approval='True' where ID={transaction_id}")
+
+    # get the transaction data to form the message
+    student_id = db.run_query(f"select ID_student from Transactions where ID={transaction_id}")[0][0]
+    is_approved_by_student = db.run_query(f"select Student_approval from Transactions where ID={transaction_id}")[0][0]
+    transaction_type = db.run_query(f"select Type from Transactions where ID={transaction_id}")[0][0]
+
+    if not is_approved_by_student:
+        if transaction_type == "Grade":
+            grade_data = db.run_query(f"select Subject, Grade from Transactions where ID={transaction_id}")[0]
+            message = f"The university approved the transaction for Grade: {grade_data[1]} - Subject: {grade_data[0]} at {date}. Waiting for your approval."
+
+            # get the student data and encode the new nonce
+            prev_message = db.run_query(f"select TransactionMessages from Students where ID={student_id}")[0][0]
+            new_message = prev_message + f"; {message}"
+
+            new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+            prev_hash = db.run_query(f"select Nonce from Students where ID={student_id}")[0][0]
+
+            # update the student in the db with the new info
+            db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {student_id})")
+
+            return redirect('transactions_view_education')
+
+        elif transaction_type == "Diploma":
+            pass
+
+    elif is_approved_by_student == 1:
+        if transaction_type == "Grade":
+            grade_data = db.run_query(f"select Subject, Grade from Transactions where ID={transaction_id}")[0]
+            message = f"The university approved the transaction for Grade: {grade_data[1]} - Subject: {grade_data[0]} at {date}. You can see it in the Grades section!"
+
+            # delete transaction from list
+            db.run_query(f"delete from Transactions where ID={transaction_id}")
+
+            # insert the grade into the Grades table
+            db.run_query(f"insert into Grades(Subject, Grade, Date, ID_student) values('{grade_data[0]}', '{grade_data[1]}', '{date}', {student_id})")
+
+            # get the student data and encode the new nonce
+            prev_message = db.run_query(f"select TransactionMessages from Students where ID={student_id}")[0][0]
+            new_message = prev_message + f"; {message}"
+
+            new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+            prev_hash = db.run_query(f"select Nonce from Students where ID={student_id}")[0][0]
+
+            # update the student in the db with the new info
+            db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={student_id}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {student_id})")
+
+            return redirect('transactions_view_education')
+
+        elif transaction_type == "Diploma":
+            pass
+
+
+def decline_transaction_education(request, transaction_id):
+    # remember when the transaction was approved
+    date = datetime.now()
+
+    db = DbEngine.instance()
+
+    # set Education_entity_approval to False
+    db.run_query(f"update Transactions set Education_entity_approval='False' where ID={transaction_id}")
+
+    student_id = db.run_query(f"select ID_student from Transactions where ID={transaction_id}")[0][0]
+    transaction_type = db.run_query(f"select Type from Transactions where ID={transaction_id}")[0][0]
+
+    # create the message based on the transaction
+    if transaction_type == "Grade":
+        grade_data = db.run_query(f"select Subject, Grade from Transactions where ID={transaction_id}")[0]
+        message = f"The university declined the transaction for Grade: {grade_data[1]} - Subject: {grade_data[0]} at {date}."
+
+        # delete transaction from list
+        db.run_query(f"delete from Transactions where ID={transaction_id}")
+
+        # get the student data and encode the new nonce
+        prev_message = db.run_query(f"select TransactionMessages from Students where ID={student_id}")[0][0]
+        new_message = prev_message + f"; {message}"
+
+        new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+        prev_hash = db.run_query(f"select Nonce from Students where ID={student_id}")[0][0]
+
+        # update the student in the db with the new info
+        db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+        db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {student_id})")
+
+        return redirect('transactions_view_education')
+
+
+@custom_login_required
 def new_grade(request):
     if request.method == "POST":
         first_name = request.POST.get('first_name')
@@ -290,3 +407,34 @@ def new_grade(request):
             return render(request, 'new_grade.html', {'success_message': message})
 
     return render(request, 'new_grade.html')
+
+
+@custom_login_required
+def grant_diploma(request):
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        last_name = request.POST['last_name']
+        message = request.POST['message']
+
+        db = DbEngine.instance()
+
+        # get ids
+        student_id = db.run_query(f"select ID from Students where FirstName='{first_name}' and LastName='{last_name}'")[0][0]
+        education_entity_id = request.session.get('user_id')
+
+        # check if student is assigned to the education_entity
+        is_assigned = db.run_query(f"select EducationEntityID from Students where ID={student_id}")[0][0]
+
+        if is_assigned:
+            new_transaction = Transaction(transaction_type="Diploma", education_entity_id=education_entity_id, student_id=student_id, custom_message=message)
+            if new_transaction:
+                success_message = "Diploma has been granted!"
+                return render(request, 'grant_diploma.html', {'success_message': success_message})
+            else:
+                message = "Something went wrong. Try again"
+                return render(request, 'grant_diploma.html', {'success_message': message})
+        else:
+            message = "Student could not be found."
+            return render(request, 'grant_diploma.html', {'success_message': message})
+
+    return render(request, 'grant_diploma.html')

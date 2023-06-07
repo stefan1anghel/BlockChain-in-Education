@@ -5,13 +5,14 @@ import hashlib
 
 class Transaction:
     def __init__(self, transaction_type, subject=None, grade: float = None, professor_id=None,
-                 education_entity_id=None, student_id=None):
+                 education_entity_id=None, student_id=None, custom_message=None):
         self.transaction_type = transaction_type
         self.subject = subject
         self.grade = grade
         self.professor_id = professor_id
         self.education_entity_id = education_entity_id
         self.student_id = student_id
+        self.custom_message = custom_message
 
         if transaction_type == "Grade":
             db = DbEngine.instance()
@@ -52,14 +53,21 @@ class Transaction:
             db.run_query(f"insert into Messages (Message, Date, ID_student) values('{self.transaction_message}', '{datetime.now()}', {self.student_id})")
 
         elif transaction_type == "Diploma":
-            pass
+            db = DbEngine.instance()
 
+            self.transaction_message = self.custom_message
 
-class Grade:
-    def __init__(self, subject, grade, first_name, last_name):
-        db = DbEngine.instance()
-        self.student_id = db.run_query(f"select ID from Students where first_name='{first_name}' and last_name='{last_name}'")[0][0]
-        self.subject = subject
-        self.grade = grade
+            # generate new message to encode
+            prev_message = db.run_query(f"select TransactionMessages from Students where ID={student_id}")[0][0]
+            new_message = prev_message + f"; {self.transaction_message}"
 
-        db.run_query(f"insert into Grades(Subject, Grade, ID_student, ID_grade) values('{self.subject}', '{self.grade}', {self.student_id}, {self.id})")
+            # encode the new message and the current nonce becomes the prev hash
+            new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+            prev_hash = db.run_query(f"select Nonce from Students where ID={student_id}")[0][0]
+
+            # update the student in the db with the new info
+            db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={self.student_id}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{self.transaction_message}', '{datetime.now()}', {self.student_id})")
+            query = f"insert into Diplomas (Diploma_code, ID_education_entity, ID_student) values('{new_nonce}', {self.education_entity_id}, {self.student_id})"
+            breakpoint()
+            db.run_query(f"insert into Diplomas (Diploma_code, ID_education_entity, ID_student) values('{new_nonce}', {self.education_entity_id}, {self.student_id})")

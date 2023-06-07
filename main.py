@@ -4,8 +4,22 @@ from mywebapp.webapp.database_engine import DbEngine
 
 db = DbEngine.instance()
 
-prof_list = db.run_query(f"select ID from Professors where ID_education_entity=1")
-print(prof_list)
+student_ids = db.run_query(f"select ID_student from Transactions")
+name_list = []
+for id in student_ids:
+    name = db.run_query(f"select FirstName, LastName from Students where ID={id[0]}")[0]
+    concat_name = name[0] + " " + name[1]
+    name_list.append(concat_name)
+
+data = db.run_query(f"select * from Diplomas where ID=3")
+print(data)
+
+parsed_data_list = []
+for index in range (len(data)):
+    new_data_list = list(data[index])
+    new_data_list.insert(0, name_list[index])
+    parsed_data_list.append(new_data_list)
+
 #
 # student1 = StudentBlock("Stefan Anghel")
 # entity1 = EducationEntity("University", "Poli")
