@@ -10,13 +10,19 @@
     <table class="table table-striped">
       <thead>
         <tr>
+          <th>Message ID</th>
           <th>Messages</th>
+          <th>Date</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-            <td>{{ data }}</td>
-        </tr>
+        {% for item in data %}
+            <tr>
+                <td>{{ item.0 }}</td>
+                <td>{{ item.1 }}</td>
+                <td>{{ item.2 }}</td>
+            </tr>
+        {% endfor %}
     </tbody>
     </table>
   </div>

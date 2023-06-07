@@ -53,7 +53,7 @@ def grades_view(request):
 @custom_login_required
 def blockchain_view(request):
     db = DbEngine.instance()
-    data = db.run_query(f"select TransactionMessages from Students where ID={request.session.get('user_id')}")[0][0]
+    data = db.run_query(f"select ID, Message, Date from Messages where ID_student={request.session.get('user_id')}")
     return render(request, 'blockchain_history.html', {'data': data})
 
 
@@ -114,6 +114,7 @@ def accept_transaction_student(request, transaction_id):   # asta e o functie, n
 
             # update the student in the db with the new info
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {request.session.get('user_id')})")
 
             return redirect('transactions_view')
 
@@ -140,6 +141,7 @@ def accept_transaction_student(request, transaction_id):   # asta e o functie, n
 
             # update the student in the db with the new info
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {request.session.get('user_id')})")
 
             return redirect('transactions_view')
 
@@ -173,8 +175,65 @@ def accept_transaction_student(request, transaction_id):   # asta e o functie, n
 
             # update the student in the db with the new info
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {request.session.get('user_id')})")
 
             return redirect('transactions_view')
+
+
+def decline_transaction_student(request, transaction_id):
+    # remember when the transaction was approved
+    date = datetime.now()
+
+    db = DbEngine.instance()
+
+    # set Student_approval to False
+    db.run_query(f"update Transactions set Student_approval='False' where ID={transaction_id}")
+
+    transaction_type = db.run_query(f"select Type from Transactions where ID={transaction_id}")[0][0]
+
+    # create the message based on the transaction
+    if transaction_type == "Grade":
+        grade_data = db.run_query(f"select Subject, Grade from Transactions where ID={transaction_id}")[0]
+        message = f"You declined the transaction for Grade: {grade_data[1]} - Subject: {grade_data[0]} at {date}."
+
+        # delete transaction from list
+        db.run_query(f"delete from Transactions where ID={transaction_id}")
+
+        # get the student data and encode the new nonce
+        prev_message = db.run_query(f"select TransactionMessages from Students where ID={request.session.get('user_id')}")[0][0]
+        new_message = prev_message + f"; {message}"
+
+        new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+        prev_hash = db.run_query(f"select Nonce from Students where ID={request.session.get('user_id')}")[0][0]
+
+        # update the student in the db with the new info
+        db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+        db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {request.session.get('user_id')})")
+
+        return redirect('transactions_view')
+
+    if transaction_type == "Enroll":
+        # create the new mesage with the info
+        db = DbEngine.instance()
+        education_entity_name = db.run_query(f"select Name from Education_entities where ID=(select ID_education_entity from Transactions where ID={transaction_id})")[0][0]
+        education_entity_id = db.run_query(f"select ID_education_entity from Transactions where ID={transaction_id}")[0][0]
+        message = f"You declined the enrollment into {education_entity_name} at {date}"
+
+        # delete the transaction from the list
+        db.run_query(f"delete from Transactions where ID={transaction_id}")
+
+        # get the student data and encode the new nonce
+        prev_message = db.run_query(f"select TransactionMessages from Students where ID={request.session.get('user_id')}")[0][0]
+        new_message = prev_message + f"; {message}"
+
+        new_nonce = hashlib.sha256(new_message.encode()).hexdigest()
+        prev_hash = db.run_query(f"select Nonce from Students where ID={request.session.get('user_id')}")[0][0]
+
+        # update the student in the db with the new info
+        db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={request.session.get('user_id')}")
+        db.run_query(f"insert into Messages (Message, Date, ID_student) values('{message}', '{date}', {request.session.get('user_id')})")
+
+        return redirect('transactions_view')
 
 
 @custom_login_required
