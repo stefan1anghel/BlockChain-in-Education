@@ -11,5 +11,6 @@ urlpatterns = [
     path('create_student_account/', views.create_student_account, name='create_student_account'),
     path('transactions/', views.transactions_view, name='transactions_view'),
     path('transactions/<int:transaction_id>/approve/', views.accept_transaction_student, name='accept_transaction_student'),
+    path('transactions/<int:transaction_id>/decline/', views.decline_transaction_student, name='decline_transaction_student'),
     path('enroll/', views.enroll, name='enroll')
 ]

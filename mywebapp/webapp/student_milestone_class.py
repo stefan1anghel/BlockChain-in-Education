@@ -29,13 +29,12 @@ class Transaction:
 
             # update the student in the db with the new info
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={self.student_id}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{self.transaction_message}', '{datetime.now()}', {self.student_id})")
 
         elif transaction_type == "Enroll":
             db = DbEngine.instance()
             education_entity_name = db.run_query(f"select Name from Education_entities where ID={self.education_entity_id}")[0][0]
             self.info = f"Enrollment by {education_entity_name}"
-            query = f"insert into Transactions (ID_student, ID_education_entity, Type, Info, Education_entity_approval) values({self.student_id}, {self.education_entity_id}, '{self.transaction_type}', '{self.info}', 'True')"
-            breakpoint()
             db.run_query(f"insert into Transactions (ID_student, ID_education_entity, Type, Info, Education_entity_approval) values({self.student_id}, {self.education_entity_id}, '{self.transaction_type}', '{self.info}', 'True')")
 
             self.transaction_message = f"A new enrollment request has been initialised by {education_entity_name}"
@@ -50,6 +49,7 @@ class Transaction:
 
             # update the student in the db with the new info
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={self.student_id}")
+            db.run_query(f"insert into Messages (Message, Date, ID_student) values('{self.transaction_message}', '{datetime.now()}', {self.student_id})")
 
         elif transaction_type == "Diploma":
             pass
@@ -63,17 +63,3 @@ class Grade:
         self.grade = grade
 
         db.run_query(f"insert into Grades(Subject, Grade, ID_student, ID_grade) values('{self.subject}', '{self.grade}', {self.student_id}, {self.id})")
-
-# class StudentMilestone:
-#     def __init__(self, milestone_type, milestone_info):
-#         self.milestone_type = milestone_type
-#         self.milestone_info = milestone_info
-#         self.student_approval = None
-#         self.education_entity_approval = None
-#
-#     def return_milestone_info_dict(self):
-#         milestone_info_dict = {
-#             "milestone_type": self.milestone_type,
-#             "milestone_info": self.milestone_info,
-#         }
-#         return milestone_info_dict
