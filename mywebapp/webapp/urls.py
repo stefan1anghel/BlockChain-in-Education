@@ -12,5 +12,6 @@ urlpatterns = [
     path('transactions/', views.transactions_view, name='transactions_view'),
     path('transactions/<int:transaction_id>/approve/', views.accept_transaction_student, name='accept_transaction_student'),
     path('transactions/<int:transaction_id>/decline/', views.decline_transaction_student, name='decline_transaction_student'),
-    path('enroll/', views.enroll, name='enroll')
+    path('enroll/', views.enroll, name='enroll'),
+    path('new_grade/', views.new_grade, name='new_grade')
 ]
