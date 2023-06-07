@@ -257,3 +257,36 @@ def enroll(request):
             return render(request, 'enroll.html', {'success_message': success_message})
 
     return render(request, 'enroll.html')
+
+
+@custom_login_required
+def new_grade(request):
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        last_name = request.POST['last_name']
+        grade = float(request.POST['grade'])
+
+        # get the id of the student
+        db = DbEngine.instance()
+        student_id = db.run_query(f"select ID from Students where FirstName='{first_name}' and LastName='{last_name}'")[0][0]
+
+        # check if the student is assigned to the professor
+        is_assigned = db.run_query(f"select * from ProfessorsStudents where IDstudent={student_id} and IDprofessor={request.session.get('user_id')}")[0][0]
+
+        # get prof info
+        subject = db.run_query(f"select Subject from Professors where ID={request.session.get('user_id')}")[0][0]
+        education_entity_id = db.run_query(f"select ID_education_entity from Professors where ID={request.session.get('user_id')}")[0][0]
+
+        if is_assigned:
+            new_transaction = Transaction("Grade", subject=subject, grade=grade, professor_id=request.session.get('user_id'), student_id=student_id, education_entity_id=education_entity_id)
+            if new_transaction:
+                success_message = "The transaction has been initialised"
+                return render(request, 'new_grade.html', {'success_message': success_message})
+            else:
+                fail_message = "The transaction could not be initialised. Try again."
+                return render(request, 'new_grade.html', {'success_message': fail_message})
+        else:
+            message = "The student is not assigned under you."
+            return render(request, 'new_grade.html', {'success_message': message})
+
+    return render(request, 'new_grade.html')
