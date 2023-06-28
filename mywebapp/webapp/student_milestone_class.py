@@ -69,5 +69,4 @@ class Transaction:
             db.run_query(f"update Students set Nonce = '{new_nonce}', PreviousHash = '{prev_hash}', TransactionMessages = '{new_message}' where ID={self.student_id}")
             db.run_query(f"insert into Messages (Message, Date, ID_student) values('{self.transaction_message}', '{datetime.now()}', {self.student_id})")
             query = f"insert into Diplomas (Diploma_code, ID_education_entity, ID_student) values('{new_nonce}', {self.education_entity_id}, {self.student_id})"
-            breakpoint()
             db.run_query(f"insert into Diplomas (Diploma_code, ID_education_entity, ID_student) values('{new_nonce}', {self.education_entity_id}, {self.student_id})")

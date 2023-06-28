@@ -29,6 +29,10 @@
           <button type="submit" class="btn btn-primary btn-block mt-4">Submit grade</button>
         </form>
 
+        <div>
+          <a href="{% url 'welcome_professors' %}">Go to the main menu</a>
+        </div>
+
         {% if success_message %}
          <p>{{ success_message }}</p>
         {% endif %}

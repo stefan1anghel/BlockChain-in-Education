@@ -4,38 +4,39 @@
   <title>Welcome!</title>
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    .centered-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .centered-buttons .btn {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container h-100">
-    <div class="row align-items-center h-100">
-      <div class="col-md-6 offset-md-3">
-        <a href="{% url 'enroll' %}">
-          <button class="btn btn-primary">Enroll student</button>
-        </a>
-      </div>
+  <div class="container centered-buttons">
+    <a href="{% url 'enroll' %}">
+      <button class="btn btn-primary">Enroll student</button>
+    </a>
+
+    <a href="{% url 'transactions_view_education' %}">
+      <button class="btn btn-primary">View transactions list</button>
+    </a>
+
+    <a href="{% url 'grant_diploma' %}">
+      <button class="btn btn-primary">Grant diploma</button>
+    </a>
+
+    <div>
+      <a href="{% url 'login' %}">Log Out</a>
     </div>
   </div>
-
-  <div class="container h-100">
-    <div class="row align-items-center h-100">
-      <div class="col-md-6 offset-md-3">
-        <a href="{% url 'transactions_view_education' %}">
-          <button class="btn btn-primary">View transactions list</button>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="container h-100">
-    <div class="row align-items-center h-100">
-      <div class="col-md-6 offset-md-3">
-        <a href="{% url 'grant_diploma' %}">
-          <button class="btn btn-primary">Grant diploma</button>
-        </a>
-      </div>
-    </div>
-  </div>
-
 
   <!-- Include Bootstrap JavaScript -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

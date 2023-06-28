@@ -28,7 +28,9 @@
 
           <button type="submit" class="btn btn-primary btn-block mt-4">Grant diploma</button>
         </form>
-
+        <div>
+          <a href="{% url 'welcome_education_entities' %}">Go to the main menu</a>
+        </div>
         {% if success_message %}
          <p>{{ success_message }}</p>
         {% endif %}
