@@ -263,7 +263,7 @@ def enroll(request):
 def transactions_view_education(request):
     db = DbEngine.instance()
     data = db.run_query(f"select Type, Subject, Grade, Info, Student_approval, Education_entity_approval, ID from Transactions where ID_education_entity={request.session.get('user_id')}")
-    student_ids = db.run_query(f"select ID_student from Transactions")
+    student_ids = db.run_query(f"select ID_student from Transactions where ID_education_entity={request.session.get('user_id')}")
     name_list = []
     for id in student_ids:
         name = db.run_query(f"select FirstName, LastName from Students where ID={id[0]}")[0]
@@ -388,6 +388,7 @@ def new_grade(request):
         student_id = db.run_query(f"select ID from Students where FirstName='{first_name}' and LastName='{last_name}'")[0][0]
 
         # check if the student is assigned to the professor
+        query = f"select * from ProfessorsStudents where IDstudent={student_id} and IDprofessor={request.session.get('user_id')}"
         is_assigned = db.run_query(f"select * from ProfessorsStudents where IDstudent={student_id} and IDprofessor={request.session.get('user_id')}")[0][0]
 
         # get prof info
@@ -438,3 +439,24 @@ def grant_diploma(request):
             return render(request, 'grant_diploma.html', {'success_message': message})
 
     return render(request, 'grant_diploma.html')
+
+
+def check_diploma_code(request):
+    if request.method == "POST":
+        diploma_code = request.POST.get('diploma_code')
+
+        db = DbEngine.instance()
+        diploma_ID = db.run_query(f"select ID from Diplomas where Diploma_code='{diploma_code}'")[0][0]
+
+        if diploma_ID:
+            student_name = db.run_query(f"select FirstName, LastName from Students where ID=(select ID_student from Diplomas where ID={diploma_ID})")[0]
+            student_name_concat = student_name[0] + " " + student_name[1]
+            education_entity_name = db.run_query(f"select Name from Education_entities where ID=(select ID_education_entity from Diplomas where ID={diploma_ID})")[0][0]
+
+            message = f"Diploma code is authentic. Owner: {student_name_concat}, given by {education_entity_name}"
+            return render(request, 'check_diploma_code.html', {'success_message': message})
+        else:
+            message = f"The code you entered does not represent an original diploma"
+            return render(request, 'check_diploma_code.html', {'success_message': message})
+
+    return render(request, 'check_diploma_code.html')

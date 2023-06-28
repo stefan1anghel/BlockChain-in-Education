@@ -38,7 +38,9 @@
 
           <button type="submit" class="btn btn-primary btn-block mt-4">Sign up</button>
         </form>
-
+        <div>
+          <a href="{% url 'login' %}">Go back to the Log In screen</a>
+        </div>
         {% if success_message %}
          <p>{{ success_message }}</p>
         {% endif %}

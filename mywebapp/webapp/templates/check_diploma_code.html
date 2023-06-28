@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Welcome!</title>
+  <title>Check diploma code</title>
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
@@ -9,29 +9,23 @@
   <div class="container h-100">
     <div class="row align-items-center h-100">
       <div class="col-md-6 offset-md-3">
-        <form method="post" action="{% url 'grades_view' %}">
+        <form method="post" action="{% url 'check_diploma_code' %}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View grades</button>
+          <div class="form-group">
+            <label for="diploma_code">Enter diploma code</label>
+            <input type="text" id="diploma_code" name="diploma_code" class="form-control" />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block mt-4">Check code</button>
         </form>
 
-        <form method="post" action="{% url 'transactions_view' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View transaction list</button>
-        </form>
+        {% if success_message %}
+         <p>{{ success_message }}</p>
+        {% endif %}
 
-        <form method="post" action="{% url 'blockchain_view' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block mt-4">View blockchain history</button>
-        </form>
-
-        <div>
-          <a href="{% url 'login' %}">Log Out</a>
-        </div>
       </div>
     </div>
   </div>
-
-
 
   <!-- Include Bootstrap JavaScript -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

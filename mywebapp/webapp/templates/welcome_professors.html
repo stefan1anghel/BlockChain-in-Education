@@ -4,6 +4,19 @@
   <title>Welcome!</title>
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    .centered-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+  </style>
 </head>
 <body>
   <div class="container h-100">
@@ -12,6 +25,9 @@
         <a href="{% url 'new_grade' %}">
           <button class="btn btn-primary">New grade</button>
         </a>
+        <div>
+          <a href="{% url 'login' %}">Log Out</a>
+        </div>
       </div>
     </div>
   </div>

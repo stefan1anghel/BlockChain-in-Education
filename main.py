@@ -12,7 +12,8 @@ for id in student_ids:
     name_list.append(concat_name)
 
 data = db.run_query(f"select * from Diplomas where ID=3")
-print(data)
+if data:
+    print("da veric")
 
 parsed_data_list = []
 for index in range (len(data)):
